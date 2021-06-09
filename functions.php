@@ -160,7 +160,7 @@ function displayTable($db, $table) {
 }
 
 // on crée une nouvelle ligne dans un tableau
-function createRow($db, $table, $action){
+function createdataLine($db, $table, $action){
     // si un formulaire est envoyé, on peut continuer la création de la ligne, sinon on retourne le formulaire avec aucune donnée
     if(isFormSubmit()) {
         // si le formulaire est valide, on peut continuer la création de la ligne, sinon on retourne le formulaire avec aucune donnée
@@ -252,7 +252,7 @@ function createRow($db, $table, $action){
 }
 
 // on supprime une ligne du tableau approprié
-function deleteRow($db, $table){
+function deletedataLine($db, $table){
     // si un id n'a pas été envoyé, on retourne une erreur 404 et en fonction de la table, on change le contenu pour afficher un message et un lien vers la dite table, sinon, on execute la commande demandée
     if (!isset($_GET['id'])) {
         http_response_code(404);
@@ -284,7 +284,7 @@ function deleteRow($db, $table){
 }
 
 // on met à jour une ligne du tableau approprié
-function updateRow($db, $table, $action)
+function updatedataLine($db, $table, $action)
 {
     // si un id n'a pas été envoyé, on retourne une erreur 404 et en fonction de la table, on change le contenu pour afficher un message et un lien vers la dite table, sinon, on poursuit la vérification de la mise à jour de la ligne
     if (!isset($_GET['id'])){

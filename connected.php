@@ -25,13 +25,13 @@ if (isset($_SESSION['id']) && isset($_SESSION['username'])) {
                  $content = displayTable($db, $table);
         }
         else if(($table == 'index' || $table == 'presentation' || $table == 'travaux' || $table == 'service' || $table == 'contact') && $action == 'create' ){
-                $content = createRow($db, $table, $action);
+                $content = createdataLine($db, $table, $action);
         }
         else if (($table == 'index' || $table == 'presentation' || $table == 'travaux' || $table == 'service' || $table == 'contact') && $action == 'delete'){
-                deleteRow($db, $table);
+                deletedataLine($db, $table);
         }
         else if (($table == 'index' || $table == 'presentation' || $table == 'travaux' || $table == 'service' || $table == 'contact') && $action == 'update'){
-                $content = updateRow($db, $table, $action);
+                $content = updatedataLine($db, $table, $action);
         }
         else if (($table == 'index' || $table == 'presentation' || $table == 'travaux' || $table == 'service' || $table == 'contact')){
                 writeServiceMessage("Action non spécifiée !");
