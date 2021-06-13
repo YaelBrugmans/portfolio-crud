@@ -6,7 +6,7 @@ function getNavTravaux() {
     <nav>
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" href="?table=travaux&action=create">Créer un travail</a>
+            <a class="nav-link" href="?table=`travaux`&action=create">Créer un travail</a>
         </li>
     </ul>
     </nav>';
@@ -14,7 +14,7 @@ function getNavTravaux() {
     return $nav;
 }
 
-// liste des réalisations
+// retourne la liste des services
 function getTableTravaux($lines) {
     $table = '<h1>Liste des réalisations</h1>
     <table class="table">
@@ -24,11 +24,11 @@ function getTableTravaux($lines) {
     foreach ($lines as $line) {
         $table .= '<tr>
             <td>' . $line['id'] . '</td>
-            <td>' . ($line['image_travaux'] !== null ? '<img class="travaux-image" src="../portfolio_crud/' . $line['image_travaux'] . '" />' : '') . '</td>
+            <td>' . ($line['image_travaux'] !== null ? '<img class="image-travaux" src="' . $line['image_travaux'] . '" />' : '') . '</td>
             <td>' . $line['description'] . '</td>
             <td>
-                <a class="btn btn-danger" href="?table=travaux&action=delete&id=' . $line['id'] . '"><i class="fa fa-times"></i></a>
-                <a class="btn btn-primary" href="?table=travaux&action=update&id=' . $line['id'] . '"><i class="fa fa-edit"></i></a>
+                <a class="btn btn-danger" href="?table=`travaux`&action=delete&id=' . $line['id'] . '"><i class="fa fa-times"></i></a>
+                <a class="btn btn-primary" href="?table=`travaux`&action=update&id=' . $line['id'] . '"><i class="fa fa-edit"></i></a>
             </td>
         </tr>';
     }
@@ -39,7 +39,7 @@ function getTableTravaux($lines) {
     return $table;
 }
 
-// formulaire create et update des réalisations
+// crée un formulaire pour créer ou modifier un travail
 function getFormTravaux($travaux, $action){
     $form = '';
 
@@ -58,14 +58,14 @@ function getFormTravaux($travaux, $action){
             <input type="textarea" name="description" id="description" value="' . ($travaux ? $travaux['description'] : '') . '"/>
         </div>
         <div class="form-group">
-            <label for="image">image:</label>
+            <label for="image_travaux">image:</label>
             <br>
-            <input type="file" name="image" id="image" ' . ($travaux ? 'disabled="true"': '') . '/>';
+            <input type="file" name="image_travaux" id="image_travaux" ' . ($travaux ? 'disabled="true"': '') . '/>';
             if ($travaux && $action == 'update') {
-                $form.= '<img class="travaux-image" src="../portfolio_crud/' . $travaux['image'] . '"/>';
+                $form.= '<img class="travaux-travaux" src="' . $travaux['image_travaux'] . '"/>';
             }
             $form.= '
-            <script src="/portfolio_crud/images.js"></script>
+            <script src="image.js"></script>
         </div>
         <div class="form-group">
             <button class="btn btn-primary" type="submit">envoyer</button>

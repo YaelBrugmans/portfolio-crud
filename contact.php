@@ -6,7 +6,7 @@ function getNavContact() {
     <nav class="action">
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" href="?table=contact&action=create">Créer un mail de contact</a>
+            <a class="nav-link" href="?table=`contact`&action=create">Créer un mail de contact</a>
         </li>
     </ul>
     </nav>';
@@ -19,7 +19,7 @@ function getTableContact($lines) {
     $table = '
     <h1>Liste des mails de contact</h1>
     <table class="table">
-    <thead><tr>    <th>id</th> <th>titre</th>  <th>réponse</th>   <th>image_index</th>    <th>action</th> </tr></thead>
+    <thead><tr>    <th>id</th> <th>expediteur</th>  <th>destinataire</th>   <th>objet</th>    <th>message</th> <th>date</th> </tr></thead>
     <tbody>';
     
     foreach ($lines as $line) {
@@ -31,8 +31,8 @@ function getTableContact($lines) {
             <td>' . $line['contact_message'] . '</td>
             <td>' . $line['contact_date'] . '</td>
             <td>
-                    <a class="btn btn-danger" href="?table=contact&action=delete&id=' . $line['id'] . '"><i class="fa fa-times"></i></a>
-                    <a class="btn btn-primary" href="?table=contact&action=update&id=' . $line['id'] . '"><i class="fa fa-edit"></i></a>
+                    <a class="btn btn-danger" href="?table=`contact`&action=delete&id=' . $line['id'] . '"><i class="fa fa-times"></i></a>
+                    <a class="btn btn-primary" href="?table=`contact`&action=update&id=' . $line['id'] . '"><i class="fa fa-edit"></i></a>
             </td>
         </tr>';
     }
@@ -58,11 +58,11 @@ function getFormContact($contact, $action){
         <form method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="mail_expediteur">Votre adresse mail : </label>
-                <input type="text" class="form-control" name="mail_expediteur" id="mail_expediteur">' . ($contact ? $contact['mail_expediteur'] : '') . '</input>
+                <input type="text" class="form-control" name="mail_expediteur" id="mail_expediteur" value="' . ($contact ? $contact['mail_expediteur'] : '') . '">
             </div>
             <div class="form-group">
                 <label for="objet">Objet : </label>
-                <input type="text" class="form-control" name="objet" id="objet">' . ($contact ? $contact['objet'] : '') . '</input>
+                <input type="text" class="form-control" name="objet" id="objet" value="' . ($contact ? $contact['objet'] : '') . '">
             </div>
             <div class="form-group">
                 <label for="contact_message">Message : </label>

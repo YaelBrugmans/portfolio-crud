@@ -9,7 +9,7 @@ if(isset($_GET['error'])){
     $content = formError();
 }
 else{
-    $content = formLogin();
+    header("location: authentification.php");
 }
 
 // la page à afficher en cas d'erreur

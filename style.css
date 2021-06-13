@@ -1,5 +1,9 @@
 /* GENERAL */
 
+body{
+    padding: 20px;
+}
+
 .container{
     position: relative;
     margin: 50px auto;
@@ -36,12 +40,12 @@ h1{
 
 /* IMAGES */
 
-.travaux-image{
+.image-travaux{
     width: 230px;
     height: 130px;
 }
 
-.index-image{
+.image-index{
     width: 130px;
     height: 130px;
 }
@@ -70,4 +74,10 @@ input, textarea{
 
 label{
     margin-bottom: 10px;
+}
+
+footer{
+    text-align: right;
+    margin-top: 24px;/* margin-top to separate from section */
+    padding: 10px;
 }

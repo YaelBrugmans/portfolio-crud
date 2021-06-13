@@ -5,7 +5,7 @@ function getNavServices() {
     <nav class="action">
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" href="?table=service&action=create">Créer un service</a>
+            <a class="nav-link" href="?table=`services`&action=create">Créer un service</a>
         </li>
     </ul>
     </nav>';
@@ -13,7 +13,7 @@ function getNavServices() {
     return $nav;
 }
 
-// liste des services
+// retourne la liste des services
 function getTableServices($lines) {
     $table = '<h1>Liste des services</h1>
     <table class="table">
@@ -26,8 +26,8 @@ function getTableServices($lines) {
             <td>' . $line['line'] . '</td>
             <td>' . $line['incrementation'] . '</td>
             <td>
-                    <a class="btn btn-danger" href="?table=service&action=delete&id=' . $line['id'] . '"><i class="fa fa-times"></i></a>
-                    <a class="btn btn-primary" href="?table=service&action=update&id=' . $line['id'] . '"><i class="fa fa-edit"></i></a>
+                    <a class="btn btn-danger" href="?table=`services`&action=delete&id=' . $line['id'] . '"><i class="fa fa-times"></i></a>
+                    <a class="btn btn-primary" href="?table=`services`&action=update&id=' . $line['id'] . '"><i class="fa fa-edit"></i></a>
             </td>
         </tr>';
     }
@@ -38,6 +38,7 @@ function getTableServices($lines) {
     return $table;
 }
 
+// crée un formulaire pour créer ou modifier une ligne des services
 function getFormServices($service, $action){
     $form = '';
         if ($action == 'create') {
@@ -50,15 +51,11 @@ function getFormServices($service, $action){
         <form method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="line">Service : </label>
-            <textarea class="form-control" name="line" id="line">' . ($service ? $service['line'] : '') . '</textarea>
+            <input type="text" class="form-control" name="line" id="line" value="' . ($service ? $service['line'] : '') . '"></input>
         </div>
         <div class="form-group">
             <label for="incrementation">Incrementation : </label>
-            <select class="form-control" name="incrementation" id="incrementation">';
-            foreach ($service as $incrementation) {
-                $form .= '<option value="' . $incrementation . '">' . $incrementation . '</option>';
-            }
-            $form .= '</select>
+            <input type="text" class="form-control" name="incrementation" id="incrementation" value="' . ($service ? $service['incrementation'] : '') . '"></input>
         </div>
         <div class="form-group">
             <button class="btn btn-primary" type="submit">envoyer</button>

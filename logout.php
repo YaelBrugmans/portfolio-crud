@@ -5,7 +5,7 @@ session_start();
 session_unset();
 session_destroy();
 
-header('Location: /portfolio_crud/index.php');
+header('Location: index.php');
 
 
 ?>

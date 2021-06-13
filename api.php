@@ -35,7 +35,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 
     case 'GET':
         // en fonction de la page, on cherche la table appropriée, sinon on renvoie une erreur et break
-        if($page == 'accueil' || $page == 'presentation' || $page == 'travaux' || $page == 'services' || $page == 'contact'){
+        if($page == 'accueil' || $page == '`presentation`' || $page == '`travaux`' || $page == '`services`' || $page == '`contact`'){
             $request = $db->prepare("SELECT * FROM `$page`");
         }
         else {
