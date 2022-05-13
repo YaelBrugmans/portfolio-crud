@@ -1,0 +1,83 @@
+/* GENERAL */
+
+body{
+    margin: 50px;
+}
+
+.container{
+    position: relative;
+    margin: 50px auto;
+    width: 1120px;
+}
+
+.right{
+    position: absolute;
+    right: 0;
+}
+
+.login{
+    margin: 280px auto;
+    width: 400px;
+    text-align: center;
+}
+
+.message{
+    margin-bottom: -50px;
+}
+
+.target{
+    color: red;
+}
+
+/* NAVIGATION */
+
+.first-nav{
+    margin-bottom: 20px; 
+}
+
+/* TITLES */
+
+h1{
+    margin-top: 60px;
+    margin-bottom: 30px;
+}
+
+/* IMAGES */
+
+.works-image{
+    width: 230px;
+    height: 130px;
+}
+
+.index-image{
+    width: 130px;
+    height: 130px;
+}
+
+/* TABLE */
+
+th,
+td{
+    text-align: center;
+}
+
+/* FORM */
+
+form{
+    margin-bottom: 25px;
+}
+
+form div p{
+    margin-top: -15px;
+    margin-bottom: 25px;
+}
+
+input, textarea{
+    margin-bottom: 25px;
+}
+
+label{
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
