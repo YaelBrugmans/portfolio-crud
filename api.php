@@ -1,13 +1,14 @@
 <?php
-
-// base de donnée
-include 'db.php';
-
 // les autorisations nécessaires à la db
 header('Access-Control-Allow-Headers: *');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Content-Type: application/json');
+
+// base de donnée
+include 'db.php';
+
+
 
 // la page d'où vient l'information
 $page = null;
@@ -48,8 +49,8 @@ switch($_SERVER['REQUEST_METHOD']) {
         echo json_encode($data);
         break;
 
+    // si aucune méthode n'est reconnue, un message d'erreur est envoyé
     default:
-        // si aucune méthode n'est reconnue, un message d'erreur est envoyé
         echo 'Méthode GET ou POST non reconnue';
         break;
 }

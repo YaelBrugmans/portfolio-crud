@@ -100,7 +100,8 @@ function createdataLine($db, $table, $action){
                 }
                 else {
                     writeServiceMessage('Un problème est survenu lors de la manipulation de la table');
-                    header('Location: /portfolio_crud/connected.php?table=index&action=list');
+                    //header('Location: /portfolio_crud/connected.php?table=index&action=list');
+                    header('Location: /connected.php?table=index&action=list');
                 }
                 die();
             }
@@ -174,7 +175,8 @@ function updatedataLine($db, $table, $action)
     if (!isset($_GET['id'])){
         http_response_code(404);
         if($table == 'index' || $table == 'presentation' || $table == 'works' || $table == 'services' || $table == 'contact'){
-            $content = 'Mauvaise requête, impossible de mettre à jour sans avoir un id. Veuillez <a href="/portfolio_crud/home.php?table=' . $table . '&action=list">retourner à la liste ' . $table . '</a>';
+            //$content = 'Mauvaise requête, impossible de mettre à jour sans avoir un id. Veuillez <a href="/portfolio_crud/home.php?table=' . $table . '&action=list">retourner à la liste ' . $table . '</a>';
+            $content = 'Mauvaise requête, impossible de mettre à jour sans avoir un id. Veuillez <a href="/connected.php?table=' . $table . '&action=list">retourner à la liste ' . $table . '</a>';
         }
         else {
             writeServiceMessage('Un problème est survenu lors de la manipulation de la table');
@@ -237,11 +239,13 @@ function updatedataLine($db, $table, $action)
                 if ($request->execute($params)) {
                     if($table == 'index' || $table == 'presentation' || $table == 'works' || $table == 'services' || $table == 'contact'){
                         writeServiceMessage('La table ' . $table . ' a été mise à jour avec succès.');
-                        header('Location: /portfolio_crud/home.php?table=' . $table . '&action=list');
+                        //header('Location: /portfolio_crud/home.php?table=' . $table . '&action=list');
+                        header('Location: /connected.php?table=' . $table . '&action=list');
                     }
                     else {
                         writeServiceMessage('Un problème est survenu lors de la manipulation de la table');
-                        header('Location: /portfolio_crud/home.php?table=index&action=list');
+                        //header('Location: /portfolio_crud/home.php?table=index&action=list');
+                        header('Location: /connected.php?table=index&action=list');
                     }
                     die();
                 }

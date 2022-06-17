@@ -99,17 +99,12 @@ function isFormValid() : bool {
     $form =  
         (isset($_POST['id']));
 
-    var_dump($form);
-    var_dump($_FILES['image']);
-    var_dump($_FILES['image']['contact']);
-    $get = $_FILES;
-
     // si il y a un forme, qu'une image a bien été envoyé et que le fichier n'a strictement aucune erreur, 
     if ($form && isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
         // si l'image est dans un autre format que jpg, jpeg et png, on retourne un message d'erreur
         $imageParameters = pathinfo($_FILES['image']['name']);
         $imageExtension = $imageParameters['extension'];
-        $extensionsAllowed = array('jpg', 'jpeg', 'png');
+        $extensionsAllowed = array('jpg', 'jpeg', 'png', 'gif');
         if (!in_array($imageExtension, $extensionsAllowed)) {
             writeServiceMessage("Seulement les extensions " . implode(", ", $extensionsAllowed) . " sont autorisées");
             $form = false;
@@ -120,8 +115,6 @@ function isFormValid() : bool {
             $form = false;
         }
     }
-    else
-        writeServiceMessage("Formulaire invalide");
 
     return $form; 
 }
@@ -143,38 +136,11 @@ function getServiceMessage() {
 
 // si l'image envoyé par l'utilisateur est bien téléchargé par post, on lui donne un chemin d'accès et un identifiant unique
 function uploadImage($db, $image) {
-    $allowed_extensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-    $max_file_size = 1024 * 400;
-    $extension = strtlower(pathinfo($image['name'])['extension']);
-    $filepath = null;
-    global $prefix;
-    if(in_array($extension, $allowed_extensions)){
-        if ($image['size'] < $max_file_size){
-            //move_uploaded_file($image['tmp_name'], __DIR__ . '/images/' . uniqid() . '-' . $image['name']);
-            move_uploaded_file($image['tmp_name'], __DIR__ . '/images/' . $image['name']);
-            $filepath = $image['name']['extension'];
-            $request = $db->prepare('INSERT INTO ' . $prefix . 'image (`name`, `extansion`, `format`) VALUES (:name, :extansion, :format)');
-            $params = [
-                'name' => $image['name'],
-                'extansion' => $image['extension'],
-                'format' => $image['size'],
-            ];
-            if ($request->execute($params))
-                writeServiceMessage('Créée avec succès!');
-        } else
-            echo 'La taille maximum est de ' . $max_file_size . ' par fichier.';
-    } else
-        echo 'Seul les fichiers images sont autorisés';
-
-    var_dump($_FILES['image']);
-
-    return $filepath;
-
-    //$filePath = './images/' . basename($image['name']['extension']);
-    //if(move_uploaded_file($image['tmp_name'], $filePath))
-    //    return $filePath;
-    //else
-    //    return null;
+    $filePath = './images/' . basename($_FILES['name']['extension']);
+    if(move_uploaded_file($_FILES['image']['tmp_name'], $filePath))
+        return $filePath;
+    else
+       return null;
 }
 
 // retourne la table demandée en fonction de la page, sinon on affiche un message d'erreur et la table index est sélectionnée par défaut
@@ -207,30 +173,17 @@ function createdataLine($db, $table, $action){
     global $prefix;
     // si un formulaire est envoyé, on peut continuer la création de la ligne, sinon on retourne le formulaire avec aucune donnée
     if(isFormSubmit()) {
-        var_dump($prefix);
         // si le formulaire est valide, on peut continuer la création de la ligne, sinon on retourne le formulaire avec aucune donnée
         if (isFormValid()) {
-            var_dump($action);
-            var_dump($_POST);
-            $filePath = null;
+            $filePath = uploadImage($db, $_POST['image']);
             $date = null;
-            //var_dump($_POST['image']);
-            if(isset($_POST['image'])) {
-                var_dump($_POST['image']);
-                $filePath = uploadImage($db, $_POST['image']);
-                var_dump($filePath);
-            }
-            if(isset($_POST['date'])) {
-                var_dump($_POST['date']);
-                //$date = verifyDate($_POST['date']);
+            $dateTime = null;
+            // si le post contient ces valeurs, il les complète
+            if(isset($_POST['date'])) {;
                 $date = $_POST['date'];
-                var_dump($date);
             }
             if(isset($_POST['dateTime'])) {
-                var_dump($_POST['dateTime']);
-                //$date = verifyDate($_POST['date']);
                 $dateTime = $_POST['dateTime'];
-                var_dump($date);
             }
             // on selectionne la table appropriée, et on prépare les données
             if($table == 'index'){
@@ -280,7 +233,6 @@ function createdataLine($db, $table, $action){
                 die();
             }
             // les données sont executées, un message d'avertissement est retournée et on retourne à la table de départ
-            var_dump($table);
             if ($request->execute($params)) {
                 writeServiceMessage('Créée avec succès!');
                 if($table == 'index' || $table == 'presentation' || $table == 'works' || $table == 'services' || $table == 'contact'){
@@ -302,10 +254,10 @@ function createdataLine($db, $table, $action){
     }
     else{
         if($table == 'index'){
+            writeServiceMessage(getServiceMessage());
             $content = getFormIndex(null,$action);
         }
         else if($table == 'presentation'){
-            var_dump($action);
             $content = getFormPresentation(null,$action);
         }
         else if($table == 'works'){
@@ -322,7 +274,6 @@ function createdataLine($db, $table, $action){
             $content = getFormIndex(null,$action);
         }
     }
-
     return $content;
 }
 
@@ -383,10 +334,7 @@ function updatedataLine($db, $table, $action)
         if (isFormSubmit()) {
             // si le formulaire est valide, on peut continuer la mise à jour de la ligne, sinon on retourne la table de départ avec un message d'avertissement
             if (isFormValid()) {
-                //todo image false in array $_files
-                //var_dump($_GET);
-                //var_dump($_POST);
-                var_dump($_FILES['image']);
+                $filePath = uploadImage($db, $_POST['image']);
                 if($table == 'index'){
                     $request = $db->prepare('UPDATE ' . $prefix . $table . ' SET `title`=:title, `response`=:response, `image`=:image WHERE `id`=:id');
                     $params = [
@@ -439,6 +387,7 @@ function updatedataLine($db, $table, $action)
                         writeServiceMessage('La table ' . $table . ' a été mise à jour avec succès.');
                         //header('Location: /portfolio_crud/home.php?table=' . $table . '&action=list');
                         header('Location: connected.php?table=' . $table . '&action=list');
+                        die();
                     }
                     else {
                         writeServiceMessage('Un problème est survenu lors de la manipulation de la table');

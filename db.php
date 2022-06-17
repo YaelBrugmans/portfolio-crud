@@ -1,20 +1,23 @@
 <?php
 
-// paramètre de connexion à la base de donnée
-$database = 'mysql:host=localhost;dbname=portfolio';
-// $database = 'https://phpmyadmin.bes-webdeveloper-seraing.be/index.php?db=brugmans';
-// https://phpmyadmin.bes-webdeveloper-seraing.be/index.php?route=/database/structure&server=1&db=brugmans
-// http://192.99.2.109/phpmyadmin
-// $databse = 'mysql:host=phpmyadmin.bes-webdeveloper-seraing.be;dbname=brugmans';
-// $databse = 'mysql:host=localhost;dbname=portfolio';
-// localhost http://localhost/phpmyadmin/index.php?route=/database/sql&db=portfolio
-// https://phpmyadmin.bes-webdeveloper-seraing.be/index.php?route=/sql&db=brugmans&table=portfolio_index&pos=0
+// paramètres de la base de donnée
 $user = 'brugmans';
-$passw = 'Korsane1\'';
-//$passw = 'gV5&gt6BZK';
+$passw = 'Korsane1';
 $user = 'root';
 $passw = '';
+$port = '22';
+$dbName = 'brugmans';
+$host = 'https://phpmyadmin.bes-webdeveloper-seraing.be';
+$host = 'localhost';
+$database = 'mysql:dbname=' . $dbName . ';host=' . $host . ';charset=utf8';
+$database = 'mysql:dbname=portfolio;host=localhost;charset=utf8';
 
 // connection database
-$db = new PDO($database, $user, $passw);
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+try{
+    $db = new PDO($database, $user, $passw);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+}
+catch(PDOException $e){
+    printf("Échec de la connexion : %s\n", $e->getMessage());
+    exit();
+}
