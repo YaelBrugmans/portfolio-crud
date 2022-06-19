@@ -20,15 +20,15 @@ function getTableWorks($lines) {
     <table class="table">
     <thead><tr>  <th>Id</th> <th>Title</th>   <th>Description</th>  <th>Image</th>  <th>Date</th>   <th>Link</th>   <th>Action</th> </tr></thead>
     <tbody>';
-    
+
     foreach ($lines as $line) {
         $table .= '<tr>
             <td>' . $line['id'] . '</td>
             <td>' . $line['title'] . '</td>
             <td>' . $line['description'] . '</td>
-            <td>' . ($line['img'] !== null ? '<img class="works-image" src="images/' . $line['img'] . '" alt="work"/>' : '') . '</td>
+            <td>' . ($line['img'] !== null ? '<img class="works-image" src="' . $line['img'] . '" alt="work"/>' : 'No image') . '</td>
             <td>' . $line['date'] . '</td>
-            <td>' . $line['link'] . '</td>
+            <td><a href="' . $line['link'] . '">Lien vers le projet</a></td>
             <td>
                 <a class="btn btn-danger" href="?table=works&action=delete&id=' . $line['id'] . '"><i class="fa fa-times"></i></a>
                 <a class="btn btn-primary" href="?table=works&action=update&id=' . $line['id'] . '"><i class="fa fa-edit"></i></a>
@@ -48,12 +48,12 @@ function getFormWorks($works, $action){
 
     if ($action == 'create') {
         $form.= '<h1>Créer une réalisation</h1>';
-        }
-        else if($action == 'update'){
-            $form.= '<h1>Modifier une réalisation</h1>';
-        }
+    }
+    else if($action == 'update'){
+        $form.= '<h1>Modifier une réalisation</h1>';
+    }
 
-        $form.= '
+    $form.= '
         <form method="post" enctype="multipart/form-data">
         <div class="form-group" hidden>
             <label for="id">Id : </label>
@@ -73,10 +73,10 @@ function getFormWorks($works, $action){
             <label for="image">Image : </label>
             <br>
             <input type="file" name="image" id="image" ' . ($works ? 'disabled="true"': '') . ' value=""/>';
-            if ($works && $action == 'update') {
-                $form.= '<img class="works-image" src="images/' . $works['image'] . '" alt="work"/>';
-            }
-            $form.= '
+    if ($works['img'] != null && $action == 'update') {
+        $form.= '<img class="works-image" src="' . ($works['img'] ? $works['img'] : '') . '" alt="work"/>';
+    }
+    $form.= '
             <script src="image.js"></script>
             <!-- <script src="images/images.js"></script> -->
         </div>

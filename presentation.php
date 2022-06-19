@@ -21,7 +21,7 @@ function getTablePresentation($lines) {
     <table class="table">
     <thead><tr>    <th>Id</th> <th>Titre</th>  <th>Description</th>    <th>Action</th> </tr></thead>
     <tbody>';
-    
+
     foreach ($lines as $line) {
         $table .= '<tr>
             <td>' . $line['id'] . '</td>
@@ -33,7 +33,7 @@ function getTablePresentation($lines) {
             </td>
         </tr>';
     }
-    
+
     $table .= '</tbody>
     </table>';
 
@@ -44,26 +44,26 @@ function getTablePresentation($lines) {
 function getFormPresentation($presentation, $action){
     $form = '';
 
-        if ($action == 'create') {
-            $form .= '<h1>Créer une donnée de présentation</h1>';
-        }
-        else if($action == 'update'){
-            $form .= '<h1>Modifier une donnée de présentation</h1>';
-        }
+    if ($action == 'create') {
+        $form .= '<h1>Créer une donnée de présentation</h1>';
+    }
+    else if($action == 'update'){
+        $form .= '<h1>Modifier une donnée de présentation</h1>';
+    }
 
-        $form .= '
+    $form .= '
         <form method="POST" enctype="multipart/form-data">' .
-            '<div class="form-group" hidden>
+        '<div class="form-group" hidden>
                 <label for="id">Id : </label>
                 <input type="text" class="form-control" name="id" id="id" value="' . ($presentation ? $presentation['id'] : '') . '">
             </div>' .
-            //<div class="form-group">
-            //    <label for="date">Date de la présentation (l\'année) : </label>
-            //    <input type="text" class="form-control" name="date" id="date">' . ($presentation ? $presentation['date_presentation'] : '') . '</input>
-            //</div> .
-            '<div class="form-group">
+        //<div class="form-group">
+        //    <label for="date">Date de la présentation (l\'année) : </label>
+        //    <input type="text" class="form-control" name="date" id="date">' . ($presentation ? $presentation['date_presentation'] : '') . '</input>
+        //</div> .
+        '<div class="form-group">
                 <label for="title">Titre : </label>
-                <input type="text" class="form-control" name="title" id="title">' . ($presentation ? $presentation['title'] : '') . '</input>
+                <input type="text" class="form-control" name="title" id="title" value="' . ($presentation ? $presentation['title'] : '') . '"></input>
             </div>
             <div class="form-group">
                 <label for="texte">Texte : </label>

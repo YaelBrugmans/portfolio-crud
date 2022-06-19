@@ -1,14 +1,13 @@
 <?php
+
+// base de donnée
+include 'db.php';
+
 // les autorisations nécessaires à la db
 header('Access-Control-Allow-Headers: *');
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
 header('Content-Type: application/json');
-
-// base de donnée
-include 'db.php';
-
-
 
 // la page d'où vient l'information
 $page = null;
@@ -27,19 +26,24 @@ switch($_SERVER['REQUEST_METHOD']) {
         $mail_destinataire = 'yaelbrugmans1998@gmail.com';
         $object = $contactForm['object'];
         $message = $contactForm['message'];
-        $date = date_format(new DateTime($contactForm['date']),'d-m-Y H:i:s');
+        // $date = date_format(new DateTime($contactForm['date']),'d-m-Y H:i:s');
 
         // envoie du mail à la db, en requête SQL
-        $request = $db->prepare("INSERT INTO `contact`(`date`, `email`, `object`, `message`) VALUES (`date`, ` . $email . `, ` . $object`, ` . $message`)");
-        $request->execute();
+        $request = $db->prepare("INSERT INTO `portfolio_contact`(`date`, `email`, `object`, `message`) VALUES (`date`=:date, `email`=:email, `object`=:object, `message`=:message)");
+        $params = [
+            'date' => NOW(),
+            'email' => $email,
+            'object' => $object,
+            'message' => $message,
+        ];
+        $request->execute($params);
         break;
 
     case 'GET':
         // en fonction de la page, on cherche la table appropriée, sinon on renvoie une erreur et break
         if($page == 'index' || $page == 'presentation' || $page == 'works' || $page == 'services' || $page == 'contact'){
-            $request = $db->prepare("SELECT * FROM `$page`");
-        }
-        else {
+            $request = $db->prepare("SELECT * FROM portfolio_" . $page);
+        } else {
             echo 'Erreur de localisation de la page';
             break;
         }

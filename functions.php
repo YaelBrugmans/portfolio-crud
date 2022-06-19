@@ -1,5 +1,8 @@
 <?php
 
+// démarrrage de la session de l'utilisateur
+session_start();
+
 // les diverses fonctions nécessaires à chaque page pour son fonctionnement
 include 'login.php';
 include 'accueil.php';
@@ -81,7 +84,6 @@ function getFooter() {
 }
 
 // si un formulaire est posté, on vérifie qu'il a été posté correctement
-// todo verifier tous les champs toutes les tables
 function isFormSubmit() : bool {
     $valid = false;
     if ($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -96,27 +98,28 @@ function isFormSubmit() : bool {
 // on vérifie si le formulaire posté correctement a été rempli correctement
 function isFormValid() : bool {
     // les données ne doivent pas être vides
-    $form =  
+    $form =
         (isset($_POST['id']));
 
-    // si il y a un forme, qu'une image a bien été envoyé et que le fichier n'a strictement aucune erreur, 
-    if ($form && isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+    // si il y a un forme, qu'une image a bien été envoyé et que le fichier n'a strictement aucune erreur,
+    if ($form && (isset($_FILES['image']) || isset($_FILES['img'])) && $_FILES['image']['error'] == 0) {
         // si l'image est dans un autre format que jpg, jpeg et png, on retourne un message d'erreur
         $imageParameters = pathinfo($_FILES['image']['name']);
-        $imageExtension = $imageParameters['extension'];
-        $extensionsAllowed = array('jpg', 'jpeg', 'png', 'gif');
+        $imageExtension = strtolower($imageParameters['extension']);
+        $extensionsAllowed = array('jpg', 'jpeg', 'png');
+        $maxFileSize = 1024 * 400; // passé ce cap, une erreur est retournée, de plus, les fichier trop volumineux ne sont pas pris en compte par le site
         if (!in_array($imageExtension, $extensionsAllowed)) {
             writeServiceMessage("Seulement les extensions " . implode(", ", $extensionsAllowed) . " sont autorisées");
             $form = false;
         }
         // si la taille de l'image excède 1 000 000 de pixels, on retourne un message d'erreur
-        if ($_FILES['image']['size'] > 1000000) {
+        if ($_FILES['size'] > $maxFileSize) {
             writeServiceMessage("L'image est trop grande");
             $form = false;
         }
     }
 
-    return $form; 
+    return $form;
 }
 
 // écrit un message d'erreur sur la session de l'utilisateur, en cas de problème
@@ -136,11 +139,22 @@ function getServiceMessage() {
 
 // si l'image envoyé par l'utilisateur est bien téléchargé par post, on lui donne un chemin d'accès et un identifiant unique
 function uploadImage($db, $image) {
-    $filePath = './images/' . basename($_FILES['name']['extension']);
-    if(move_uploaded_file($_FILES['image']['tmp_name'], $filePath))
-        return $filePath;
+    if(isset($_FILES['image'])){
+        $filePath = $_FILES['image']['name'];
+        $source = $_FILES['image']['tmp_name'];
+    }
+    elseif (isset($_FILES['img'])){
+        $filePath = $_FILES['img']['name'];
+        $source = $_FILES['img']['tmp_name'];
+    }
+    else{
+        $filePath = null;
+    }
+    if(move_uploaded_file($_FILES['image']['tmp_name'], __DIR__ . '/images/' . $filePath)){
+        return './images/' . $filePath;
+    }
     else
-       return null;
+        return null;
 }
 
 // retourne la table demandée en fonction de la page, sinon on affiche un message d'erreur et la table index est sélectionnée par défaut
@@ -164,7 +178,6 @@ function displayTable($db, $table) {
         writeServiceMessage('Une erreur est survenue, lors de la sélection de la page');
         $content = getTableIndex($lines);
     }
-
     return $content;
 }
 
@@ -175,23 +188,26 @@ function createdataLine($db, $table, $action){
     if(isFormSubmit()) {
         // si le formulaire est valide, on peut continuer la création de la ligne, sinon on retourne le formulaire avec aucune donnée
         if (isFormValid()) {
-            $filePath = uploadImage($db, $_POST['image']);
             $date = null;
             $dateTime = null;
             // si le post contient ces valeurs, il les complète
-            if(isset($_POST['date'])) {;
+            if(isset($_POST['date']))
                 $date = $_POST['date'];
-            }
-            if(isset($_POST['dateTime'])) {
+            if(isset($_POST['dateTime']))
                 $dateTime = $_POST['dateTime'];
-            }
+            if(isset($_FILES['image']))
+                $filePath = uploadImage($db, $_FILES['image']['name']);
+            elseif (isset($_FILES['img']))
+                $filePath = uploadImage($db, $_FILES['img']['name']);
+            else
+                $filePath = null;
             // on selectionne la table appropriée, et on prépare les données
             if($table == 'index'){
                 $request = $db->prepare('INSERT INTO ' . $prefix . $table . ' (`title`, `response`, `image`) VALUES (:title, :response, :image)');
                 $params = [
                     'title' => $_POST['title'],
                     'response' => $_POST['response'],
-                    'image' => $filePath
+                    'image' => $filePath,
                 ];
             }
             else if($table == 'presentation'){
@@ -334,32 +350,38 @@ function updatedataLine($db, $table, $action)
         if (isFormSubmit()) {
             // si le formulaire est valide, on peut continuer la mise à jour de la ligne, sinon on retourne la table de départ avec un message d'avertissement
             if (isFormValid()) {
-                $filePath = uploadImage($db, $_POST['image']);
+                if(isset($_FILES['image']))
+                    $filePath = uploadImage($db, $_FILES['image']['name']);
+                elseif (isset($_FILES['img']))
+                    $filePath = uploadImage($db, $_FILES['img']['name']);
+                else
+                    $filePath = null;
                 if($table == 'index'){
                     $request = $db->prepare('UPDATE ' . $prefix . $table . ' SET `title`=:title, `response`=:response, `image`=:image WHERE `id`=:id');
                     $params = [
                         'title' => $_POST['title'],
                         'response' => $_POST['response'],
-                        'image' => $_FILES['image']
+                        'image' => $filePath,
+                        'id' => $_GET['id'],
                     ];
                 }
                 else if($table == 'presentation'){
                     $request = $db->prepare('UPDATE ' . $prefix . $table . ' SET `title`=:title, `description`=:description WHERE `id`=:id');
                     $params = [
                         'title' => $_POST['title'],
-                        'description' => $_POST['description'],
-                        'id' => $_GET['id']
+                        'description' => $_POST['texte'],
+                        'id' => $_GET['id'],
                     ];
                 }
                 else if($table == 'works'){
                     $request = $db->prepare('UPDATE ' . $prefix . $table . ' SET `img`=:img, `title`=:title, `description`=:description, `date`=:date, `link`=:link WHERE `id`=:id');
                     $params = [
-                        'img' => $_POST['img'],
+                        'img' => $filePath,
                         'title' => $_POST['title'],
                         'description' => $_POST['description'],
                         'date' => $_POST['date'],
                         'link' => $_POST['link'],
-                        'id' => $_GET['id']
+                        'id' => $_GET['id'],
                     ];
                 }
                 else if($table == 'services'){
@@ -367,7 +389,7 @@ function updatedataLine($db, $table, $action)
                     $params = [
                         'title' => $_POST['title'],
                         'description' => $_POST['description'],
-                        'id' => $_GET['id']
+                        'id' => $_GET['id'],
                     ];
                 }
                 else if($table == 'contact'){
@@ -380,7 +402,6 @@ function updatedataLine($db, $table, $action)
                         'id' => $_GET['id'],
                     ];
                 }
-
                 // les données sont executées, un message d'avertissement est retournée et on retourne à la table de départ
                 if ($request->execute($params)) {
                     if($table == 'index' || $table == 'presentation' || $table == 'works' || $table == 'services' || $table == 'contact'){

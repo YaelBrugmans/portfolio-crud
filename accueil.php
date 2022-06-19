@@ -21,21 +21,21 @@ function getTableIndex($lines) {
     <table class="table">
     <thead><tr>    <th>Id</th> <th>Titre</th>  <th>Réponse</th>   <th>Image</th>    <th>Action</th> </tr></thead>
     <tbody>';
-    
+
     foreach ($lines as $line) {
         $table .= '
         <tr>
             <td>' . $line['id'] . '</td>
             <td>' . $line['title'] . '</td>
             <td>' . $line['response'] . '</td>
-            <td>' . ($line['image'] !== null ? '<img class="index-image" src="./images/' . $line['image'] . '" alt="can\'t get image"/>' : '') . '</td>
+            <td>' . ($line['image'] != null || $line['image'] != '' ? '<img class="index-image" src="' . $line['image'] . '" alt="can\'t get image"/>' : 'No image') . '</td>
             <td>
                     <a class="btn btn-danger" href="?table=index&action=delete&id=' . $line['id'] . '"><i class="fa fa-times"></i></a>
                     <a class="btn btn-primary" href="?table=index&action=update&id=' . $line['id'] . '"><i class="fa fa-edit"></i></a>
             </td>
         </tr>';
     }
-    
+
     $table .= '</tbody>
     </table>';
 
@@ -46,19 +46,19 @@ function getTableIndex($lines) {
 function getFormIndex($index, $action){
     $form = '';
 
-        if ($action == 'create') {
-            $form .= '<h1>Créer une donnée de l\'index</h1>';
-        }
-        else if($action == 'update'){
-            $form .= '<h1>Modifier une donnée de l\'index</h1>';
-        }
+    if ($action == 'create') {
+        $form .= '<h1>Créer une donnée de l\'index</h1>';
+    }
+    else if($action == 'update'){
+        $form .= '<h1>Modifier une donnée de l\'index</h1>';
+    }
 
-        $form .= '
+    $form .= '
         <form method="post" enctype="multipart/form-data">
-            <!--<div class="form-group" hidden>
+            <div class="form-group" hidden>
                 <label for="id">Id : </label>
                 <input type="text" class="form-control" name="id" id="id" value="' . ($index ? $index['id'] : '') . '">
-            </div>-->
+            </div>
             <div class="form-group">
                 <label for="title">Titre : </label>
                 <input type="text" class="form-control" name="title" id="title" value="' . ($index ? $index['title'] : '') . '">
@@ -71,10 +71,10 @@ function getFormIndex($index, $action){
                 <label for="image">Image : </label>
                 <br>
                 <input type="file" name="image" id="image" ' . ($index ? 'disabled="true"': '') . '/>';
-                if ($index && $action == 'update') {
-                    $form.= '<img class="index-image" src="images/' . $index['image'] . '" alt="index-image"/>';
-                }
-                $form.= '
+    if ($index && $action == 'update') {
+        $form.= '<img class="index-image" src="' . $index['image'] . '" alt="index-image"/>';
+    }
+    $form.= '
                 <script src="image.js"></script>
                 <!-- <script src="../images/images.js"></script> -->
             </div>
